@@ -2,22 +2,22 @@ name: Robot Automation Tests
 
 on:
   push:
-    branches:
-      - master
+    branches: [ "main" ]
   pull_request:
+    branches: [ "main" ]
 
 jobs:
   api-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: '3.10'
 
       - name: Install dependencies
         run: |
@@ -25,27 +25,24 @@ jobs:
           pip install robotframework
           pip install RESTLibrary
           pip install robotframework-jsonlibrary
-          pip install robotframework-requests
-          pip install -r requirements.txt || true
+          pip install python-dotenv
 
-      - name: Run API Tests
-        env:
-          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-          JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
-          JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
-          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-          AUTH_HEADER_B64: ${{ secrets.AUTH_HEADER_B64 }}
-          JIRA_BOARD_ID: ${{ secrets.JIRA_BOARD_ID }}
-          JIRA_PASSWORD: ${{ secrets.JIRA_PASSWORD }}
-          PLAYWRIGHT_HEADLESS: ${{ secrets.PLAYWRIGHT_HEADLESS }}
+      - name: Set environment variables
         run: |
-          robot tests/api --output output_api.xml --log log_api.html --report report_api.html
+          echo "JIRA_BASE_URL=${{ secrets.JIRA_BASE_URL }}" >> $GITHUB_ENV
+          echo "JIRA_API_EMAIL=${{ secrets.JIRA_API_EMAIL }}" >> $GITHUB_ENV
+          echo "JIRA_API_TOKEN=${{ secrets.JIRA_API_TOKEN }}" >> $GITHUB_ENV
+          echo "JIRA_PROJECT_KEY=${{ secrets.JIRA_PROJECT_KEY }}" >> $GITHUB_ENV
+          echo "JIRA_BOARD_ID=${{ secrets.JIRA_BOARD_ID }}" >> $GITHUB_ENV
 
-      - name: Upload Artifacts (API)
-        uses: actions/upload-artifact@v3
+      - name: Run Robot Tests
+        run: robot tests/api
+
+      - name: Upload Robot Report
+        uses: actions/upload-artifact@v4
         with:
-          name: api-test-results
+          name: robot-reports
           path: |
-            output_api.xml
-            log_api.html
-            report_api.html
+            report.html
+            log.html
+            output.xml
