@@ -1,0 +1,71 @@
+name: Robot Automation Tests
+
+on:
+  push:
+    branches: [ "master" ]
+  workflow_dispatch:
+
+jobs:
+  robot-tests:
+    runs-on: ubuntu-latest
+
+    env:
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+      JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+      JIRA_BOARD_ID: ${{ secrets.JIRA_BOARD_ID }}
+      JIRA_PASSWORD: ${{ secrets.JIRA_PASSWORD }}
+      PLAYWRIGHT_HEADLESS: "true"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.13"
+
+      - name: Install Python + Robot Framework Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install robotframework
+          pip install robotframework-requests
+          pip install robotframework-jsonlibrary
+          pip install robotframework-databaselibrary
+          pip install playwright
+          pip install python-dotenv
+          pip install httpx
+          pip install robotframework-browser
+
+      - name: Install Playwright Browsers
+        run: |
+          playwright install
+          playwright install-deps
+
+      - name: Run API Tests
+        run: |
+          robot tests/api --output output_api.xml --log log_api.html --report report_api.html
+
+      - name: Run UI Tests
+        run: |
+          robot tests/ui --output output_ui.xml --log log_ui.html --report report_ui.html
+
+      - name: Upload Robot API Test Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-api-results
+          path: |
+            output_api.xml
+            log_api.html
+            report_api.html
+
+      - name: Upload Robot UI Test Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-ui-results
+          path: |
+            output_ui.xml
+            log_ui.html
+            report_ui.html
