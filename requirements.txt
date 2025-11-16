@@ -1,0 +1,8 @@
+robotframework
+robotframework-requests
+RESTinstance
+robotframework-jsonlibrary
+robotframework-restlibrary
+python-dotenv
+httpx
+playwright

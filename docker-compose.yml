@@ -1,0 +1,14 @@
+version: '3.9'
+
+services:
+  robot-jira:
+    build: .
+    container_name: jira_robot_api
+    environment:
+      JIRA_BASE_URL: ${JIRA_BASE_URL}
+      JIRA_API_EMAIL: ${JIRA_API_EMAIL}
+      JIRA_API_TOKEN: ${JIRA_API_TOKEN}
+      JIRA_PROJECT_KEY: ${JIRA_PROJECT_KEY}
+    volumes:
+      - .:/app
+    command: robot --pythonpath . tests/api

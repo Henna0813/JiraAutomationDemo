@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+
+# Robot
+output.xml
+log.html
+report.html
+
+# Environment
+.env
+.venv/
+
+# IDE
+.idea/
+.vscode/
+
+# Docker
+*.pid
