@@ -2,52 +2,37 @@ name: Robot Automation Tests
 
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "master" ]
 
 jobs:
   api-tests:
     runs-on: ubuntu-latest
-
-    env:
-      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
-      JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
-      JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
-      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
-      AUTH_HEADER_B64: ${{ secrets.AUTH_HEADER_B64 }}
-      JIRA_PASSWORD: ${{ secrets.JIRA_PASSWORD }}
-      PLAYWRIGHT_HEADLESS: ${{ secrets.PLAYWRIGHT_HEADLESS }}
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: '3.11'
 
       - name: Install dependencies
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          python -m pip install --upgrade pip
           pip install robotframework
-          pip install git+https://github.com/MarketSquare/robotframework-RESTlibrary.git
-          pip install requests
-          pip install robotframework-jsonlibrary
+          pip install git+https://${GITHUB_TOKEN}@github.com/MarketSquare/robotframework-RESTlibrary.git
 
-      - name: Run API tests
+      - name: Run Robot API Tests
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_EMAIL: ${{ secrets.JIRA_API_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
+          AUTH_HEADER_B64: ${{ secrets.AUTH_HEADER_B64 }}
         run: |
-          robot \
-            --output output_api.xml \
-            --log log_api.html \
-            --report report_api.html \
-            tests/api
-
-      - name: Upload Robot Test Reports
-        uses: actions/upload-artifact@v4
-        with:
-          name: robot-api-reports
-          path: |
-            output_api.xml
-            log_api.html
-            report_api.html
+          robot tests/api
