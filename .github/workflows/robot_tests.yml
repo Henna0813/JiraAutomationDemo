@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install robotframework
-          pip install RESTLibrary
+          pip install git+https://github.com/MarketSquare/robotframework-RESTlibrary.git
           pip install requests
           pip install robotframework-jsonlibrary
 
