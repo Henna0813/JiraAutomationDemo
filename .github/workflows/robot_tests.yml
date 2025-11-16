@@ -26,6 +26,7 @@ jobs:
           pip install robotframework-restlibrary
           pip install jsonpath-ng
           pip install robotframework-jsonlibrary
+          pip install requests
 
       - name: Run Robot API Tests
         env:
