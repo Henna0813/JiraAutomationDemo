@@ -17,3 +17,7 @@ report.html
 
 # Docker
 *.pid
+
+Dockerfile
+.dockerignore
+.git/
