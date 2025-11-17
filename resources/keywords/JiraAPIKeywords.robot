@@ -49,5 +49,3 @@ Extract From Response Keyword
     [Arguments]    ${request_id}    ${json_path}
     ${value}=    Execute RC    <<<rc, ${request_id}, body, ${json_path}>>>
     RETURN    ${value}
-
-# You can add Create Jira Issue, Update Jira Issue, Transition Jira Issue, Delete Jira Issue keywords here similarly
