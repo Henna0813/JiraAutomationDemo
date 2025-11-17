@@ -30,7 +30,7 @@ jobs:
 
       - name: Build Docker image (local)
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/jira-api-tests:ci
+          IMAGE=ghcr.io/${{ github.repository_owner | lower }}/jira-api-tests:ci
           docker build -t $IMAGE .
 
       - name: Run tests inside built image
@@ -42,8 +42,7 @@ jobs:
           AUTH_HEADER_B64: ${{ secrets.AUTH_HEADER_B64 }}
           PLAYWRIGHT_HEADLESS: ${{ secrets.PLAYWRIGHT_HEADLESS }}
         run: |
-          IMAGE=ghcr.io/${{ github.repository_owner }}/jira-api-tests:ci
-          # run the container — if your Dockerfile CMD runs robot tests by default this is sufficient
+          IMAGE=ghcr.io/${{ github.repository_owner | lower }}/jira-api-tests:ci
           docker run --rm \
             -e JIRA_BASE_URL="${JIRA_BASE_URL}" \
             -e JIRA_API_EMAIL="${JIRA_API_EMAIL}" \
@@ -59,8 +58,8 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/jira-api-tests:latest
-            ghcr.io/${{ github.repository_owner }}/jira-api-tests:${{ github.sha }}
+            ghcr.io/${{ github.repository_owner | lower }}/jira-api-tests:latest
+            ghcr.io/${{ github.repository_owner | lower }}/jira-api-tests:${{ github.sha }}
 
       - name: Upload Robot results (if any produced to workspace)
         uses: actions/upload-artifact@v4
