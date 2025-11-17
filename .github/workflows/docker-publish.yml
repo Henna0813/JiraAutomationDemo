@@ -49,20 +49,19 @@ jobs:
         run: |
           IMAGE_OWNER_LOWER=$(echo $GITHUB_REPOSITORY_OWNER | tr '[:upper:]' '[:lower:]')
           IMAGE=ghcr.io/$IMAGE_OWNER_LOWER/jira-api-tests:latest
+          mkdir -p $GITHUB_WORKSPACE/robot_results
           docker run --rm \
+            -v $GITHUB_WORKSPACE/robot_results:/app \
             -e JIRA_BASE_URL="${JIRA_BASE_URL}" \
             -e JIRA_API_EMAIL="${JIRA_API_EMAIL}" \
             -e JIRA_API_TOKEN="${JIRA_API_TOKEN}" \
             -e JIRA_PROJECT_KEY="${JIRA_PROJECT_KEY}" \
             -e AUTH_HEADER_B64="${AUTH_HEADER_B64}" \
             -e PLAYWRIGHT_HEADLESS="${PLAYWRIGHT_HEADLESS}" \
-            $IMAGE || echo "Tests failed, but continuing to push image."
+            $IMAGE || echo "Tests failed, but continuing."
 
       - name: Upload Robot results
         uses: actions/upload-artifact@v4
         with:
           name: robot-results
-          path: |
-            output.xml
-            log.html
-            report.html
+          path: robot_results/
