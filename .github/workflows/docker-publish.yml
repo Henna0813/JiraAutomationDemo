@@ -1,4 +1,4 @@
-name: Build, Test & Publish Docker image to GHCR (Demo-friendly)
+name: Build, Test & Publish Docker image to GHCR
 
 on:
   push:

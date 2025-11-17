@@ -7,7 +7,7 @@ Variables         ../variables/jira_variables.py
 
 *** Keywords ***
 Setup Secrets
-    # Placeholder for secret initialization if needed
+
     Log    Secrets initialized
 
 Create Jira Headers Keyword
